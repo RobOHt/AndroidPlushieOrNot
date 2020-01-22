@@ -1,6 +1,7 @@
 import numpy
 import plaidml.keras
 plaidml.keras.install_backend()
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import TensorBoard
@@ -39,3 +40,8 @@ model.compile(loss="binary_crossentropy",
 model.fit(X, y, batch_size=32, epochs=20, validation_split=0.05, callbacks=[tensorboard])
 
 model.save(f'{NAME}.model')
+
+# Save into tensorflow lite model
+converter = tf.lite.TFLiteConverter.from_saved_model(f'{NAME}.model')
+tflite_model = converter.convert()
+open(f"{NAME}.tflite", "wb").write(tflite_model)
